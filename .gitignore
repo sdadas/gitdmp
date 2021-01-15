@@ -1,0 +1,12 @@
+.idea
+target
+dist
+.cache
+.repos
+/output
+node
+*.iml
+*.ipr
+*.iws
+*.class
+*.log
