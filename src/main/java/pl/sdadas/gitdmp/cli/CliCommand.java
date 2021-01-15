@@ -21,6 +21,9 @@ import java.time.LocalDate;
 @CommandLine.Command(name = "git")
 public class CliCommand implements Runnable {
 
+    @CommandLine.Option(names = {"-c", "--config"}, defaultValue = "config.json")
+    private String config;
+
     @CommandLine.Option(names = {"-o", "--output-dir"}, defaultValue = "output")
     private String output;
 
@@ -48,11 +51,11 @@ public class CliCommand implements Runnable {
     }
 
     private GitdmpConfig createConfig(ObjectMapper mapper) {
-        File configFile = new File("config.json");
+        File configFile = new File(config);
         try(FileReader reader = new FileReader(configFile, StandardCharsets.UTF_8)) {
             return mapper.readValue(reader, GitdmpConfig.class);
         } catch (IOException ex) {
-            throw new IllegalStateException("config.json file not found", ex);
+            throw new IllegalStateException("config file (" + config + ") not found", ex);
         }
     }
 

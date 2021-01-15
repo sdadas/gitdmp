@@ -74,7 +74,7 @@ public class GitdmpConfig implements Serializable {
     }
 
     public GitdmpCredentials findCredentials(String credentialsId) {
-        if(credentials == null) return null;
+        if(credentials == null || credentialsId == null) return null;
         return credentials.stream().filter(val -> credentialsId.equals(val.getId())).findAny().orElse(null);
     }
 

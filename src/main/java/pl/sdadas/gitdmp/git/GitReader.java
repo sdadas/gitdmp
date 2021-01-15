@@ -84,7 +84,8 @@ public class GitReader {
     private Git cloneOrFetch(RepoRef ref) throws GitAPIException, IOException {
         File dir = ref.dir();
         GitdmpCredentials c = ref.credentials();
-        CredentialsProvider creds = new UsernamePasswordCredentialsProvider(c.getUsername(), c.getPassword());
+        CredentialsProvider creds = CredentialsProvider.getDefault();
+        if(c != null) creds = new UsernamePasswordCredentialsProvider(c.getUsername(), c.getPassword());
         return dir.exists() ? fetch(ref, creds) : clone(ref, creds);
     }
 
