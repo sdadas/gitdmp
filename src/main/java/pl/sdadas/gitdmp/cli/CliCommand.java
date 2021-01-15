@@ -17,6 +17,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @CommandLine.Command(name = "git")
 public class CliCommand implements Runnable {
@@ -24,7 +26,7 @@ public class CliCommand implements Runnable {
     @CommandLine.Option(names = {"-c", "--config"}, defaultValue = "config.json")
     private String config;
 
-    @CommandLine.Option(names = {"-o", "--output-dir"}, defaultValue = "output")
+    @CommandLine.Option(names = {"-o", "--output-dir"})
     private String output;
 
     @CommandLine.Option(names = {"-t", "--time"}, defaultValue = "THIS_MONTH")
@@ -70,7 +72,8 @@ public class CliCommand implements Runnable {
 
     private GitdmpArgs createArgs() {
         GitdmpArgs args = new GitdmpArgs();
-        args.setOutputDir(output);
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        args.setOutputDir(output != null ? output : "output_" + now);
         if(TimeRange.CUSTOM.equals(time)) {
             if(from == null || to == null) {
                 throw new IllegalArgumentException("--date-from and --date-to args are required with custom range");
