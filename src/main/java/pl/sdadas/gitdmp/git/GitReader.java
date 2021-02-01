@@ -21,6 +21,7 @@ import pl.sdadas.gitdmp.model.config.GitdmpRepo;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GitReader {
 
@@ -51,13 +52,13 @@ public class GitReader {
 
     private void findCommits(Git git, RepoRef ref) throws IOException, GitAPIException {
         GitdmpArgs args = config.getArgs();
-        Set<String> emails = new HashSet<>(config.getEmails());
+        Set<String> emails = config.getEmails().stream().map(String::toLowerCase).collect(Collectors.toSet());
         LogCommand log = git.log().all();
         log.setRevFilter(CommitTimeRevFilter.between(args.getFromDate(), args.getToDate()));
         Iterable<RevCommit> commits = log.call();
         for (RevCommit commit : commits) {
             String email = commit.getAuthorIdent().getEmailAddress();
-            if(emails.contains(email)) {
+            if(emails.contains(email.toLowerCase())) {
                 exportDiff(git, commit, ref);
             }
         }
