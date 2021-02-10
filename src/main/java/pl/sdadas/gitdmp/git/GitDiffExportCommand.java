@@ -6,6 +6,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.patch.FileHeader;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +20,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class GitDiffExportCommand implements Callable<File> {
+public class GitDiffExportCommand implements Callable<GitDiffStats> {
 
     private final static Logger LOG = LoggerFactory.getLogger(GitDiffExportCommand.class);
 
@@ -37,6 +41,8 @@ public class GitDiffExportCommand implements Callable<File> {
 
     private final RepoRef repo;
 
+    private final GitDiffStats stats;
+
     private Map<String, TaskDetails> tasks;
 
     public GitDiffExportCommand(Git git, RevCommit commit, GitdmpConfig config, RepoRef repo) {
@@ -44,10 +50,13 @@ public class GitDiffExportCommand implements Callable<File> {
         this.commit = commit;
         this.config = config;
         this.repo = repo;
+        Instant commitTime = Instant.ofEpochSecond(commit.getCommitTime());
+        LocalDateTime dateTime = LocalDateTime.ofInstant(commitTime, TimeZone.getDefault().toZoneId());
+        this.stats = new GitDiffStats(dateTime.toLocalDate());
     }
 
     @Override
-    public File call() throws IOException {
+    public GitDiffStats call() throws IOException {
         int numParents = commit.getParentCount();
         if(numParents > 1) return null;
         File outputDir = new File(config.getArgs().getOutputDir());
@@ -58,7 +67,7 @@ public class GitDiffExportCommand implements Callable<File> {
         writeDiffFile(commitDir);
         writeCommitInfoFile(commitDir);
         handleTaskGrouping(commitDir);
-        return commitDir;
+        return stats;
     }
 
     private void handleTaskGrouping(File commitDir) throws IOException {
@@ -95,7 +104,9 @@ public class GitDiffExportCommand implements Callable<File> {
             df.setRepository(git.getRepository());
             List<DiffEntry> entries = df.scan(parent, commit);
             for (DiffEntry entry : entries) {
-                df.format(df.toFileHeader(entry));
+                FileHeader header = df.toFileHeader(entry);
+                stats.add(header.toEditList());
+                df.format(header);
             }
         } catch (IOException e) {
             throw new IllegalStateException(e);

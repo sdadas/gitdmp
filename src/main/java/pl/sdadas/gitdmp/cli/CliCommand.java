@@ -38,6 +38,9 @@ public class CliCommand implements Runnable {
     @CommandLine.Option(names = {"--date-to"})
     private LocalDate to;
 
+    @CommandLine.Option(names = {"--stats"}, defaultValue = "false")
+    private Boolean stats;
+
     @Override
     public void run() {
         ObjectMapper mapper = new ObjectMapper();
@@ -47,6 +50,7 @@ public class CliCommand implements Runnable {
         GitReader git = new GitReader(config, jiraClient);
         try {
             git.readAll();
+            if (stats) git.logStats();
         } catch (GitAPIException | IOException e) {
             throw new IllegalStateException(e);
         }

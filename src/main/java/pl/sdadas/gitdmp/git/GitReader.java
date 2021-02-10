@@ -31,9 +31,12 @@ public class GitReader {
 
     private final JiraClient jiraClient;
 
+    private final GitDiffStatsCommand stats;
+
     public GitReader(GitdmpConfig config, JiraClient jiraClient) {
         this.config = config;
         this.jiraClient = jiraClient;
+        this.stats = new GitDiffStatsCommand();
     }
 
     public void readAll() throws GitAPIException, IOException {
@@ -48,6 +51,10 @@ public class GitReader {
         RepoRef ref = config.repoRef(repoId);
         Git git = cloneOrFetch(ref);
         findCommits(git, ref);
+    }
+
+    public void logStats() {
+        stats.call();
     }
 
     private void findCommits(Git git, RepoRef ref) throws IOException, GitAPIException {
@@ -68,7 +75,8 @@ public class GitReader {
         GitDiffExportCommand command = new GitDiffExportCommand(git, commit, config, ref);
         Map<String, TaskDetails> tasks = fetchTaskDetails(commit);
         command.setTasks(tasks);
-        command.call();
+        GitDiffStats commitStats = command.call();
+        stats.add(commitStats);
     }
 
     private Map<String, TaskDetails> fetchTaskDetails(RevCommit commit) {
