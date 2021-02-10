@@ -18,6 +18,7 @@ Before the first run, create a new config file according to the format described
 | `-t, --time`          | Date range mode for filtering commits. Possible values are: <br/>`THIS_MONTH` (default value, fetches only commits for the current month),<br/>`LAST_MONTH` (fetches commits for the previous month),<br/>`CUSTOM` (custom date range, `--date-from` and `--date-to` args are required for this option) |
 | `--date-from`         | Starting date (expected format `yyyy-MM-dd`)|
 | `--date-to`           | Ending date (expected format `yyyy-MM-dd`)|
+| `--stats`             | Print daily stats after export (number of files changed, lines addded, lines removed)
 
 #### Configuration file
 
