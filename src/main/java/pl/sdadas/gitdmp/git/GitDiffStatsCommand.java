@@ -15,6 +15,7 @@ public class GitDiffStatsCommand implements Callable<Void> {
     private Map<LocalDate, GitDiffStats> days = new TreeMap<>();
 
     public void add(GitDiffStats stats) {
+        if(stats == null) return;
         LocalDate day = stats.day();
         GitDiffStats found = days.get(day);
         if(found == null) {

@@ -58,7 +58,7 @@ public class GitDiffExportCommand implements Callable<GitDiffStats> {
     @Override
     public GitDiffStats call() throws IOException {
         int numParents = commit.getParentCount();
-        if(numParents > 1) return null;
+        if(numParents > 1) return stats;
         File outputDir = new File(config.getArgs().getOutputDir());
         File projectDir = new File(outputDir, repo.repo().getId());
         File commitDir = new File(projectDir, commit.getId().name());
