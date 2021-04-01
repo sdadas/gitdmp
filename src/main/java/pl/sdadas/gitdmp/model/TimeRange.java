@@ -13,7 +13,7 @@ public enum TimeRange {
         @Override
         public LocalDate getTo() {
             LocalDate date = LocalDate.now();
-            return date.withDayOfMonth(date.getMonth().length(date.isLeapYear()));
+            return date.plusMonths(1).withDayOfMonth(1);
         }
     },
 
@@ -26,8 +26,8 @@ public enum TimeRange {
 
         @Override
         public LocalDate getTo() {
-            LocalDate date = LocalDate.now().minusMonths(1);
-            return date.withDayOfMonth(date.getMonth().length(date.isLeapYear()));
+            LocalDate date = LocalDate.now();
+            return date.withDayOfMonth(1);
         }
     },
 
