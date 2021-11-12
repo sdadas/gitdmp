@@ -79,8 +79,11 @@ public class CliCommand implements Runnable {
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         args.setOutputDir(output != null ? output : "output_" + now);
         if(TimeRange.CUSTOM.equals(time)) {
-            if(from == null || to == null) {
-                throw new IllegalArgumentException("--date-from and --date-to args are required with custom range");
+            if (to == null) {
+                to = time.getTo();
+            }
+            if(from == null) {
+                throw new IllegalArgumentException("you need to provide --date-from and optionally --date-to args");
             } else if(from.isAfter(to)) {
                 throw new IllegalArgumentException("--date-from is after --date-to");
             }

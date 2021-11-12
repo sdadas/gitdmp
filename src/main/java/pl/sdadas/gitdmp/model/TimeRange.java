@@ -39,7 +39,8 @@ public enum TimeRange {
 
         @Override
         public LocalDate getTo() {
-            return null;
+            LocalDate date = LocalDate.now();
+            return date.plusMonths(1).withDayOfMonth(1);
         }
     };
 

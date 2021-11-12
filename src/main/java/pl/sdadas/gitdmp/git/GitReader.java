@@ -40,6 +40,7 @@ public class GitReader {
     }
 
     public void readAll() throws GitAPIException, IOException {
+        LOG.info("Reading commits from {} to {}", config.getArgs().getFrom(), config.getArgs().getTo());
         List<GitdmpRepo> repos = config.getRepos();
         if(repos == null) return;
         for (GitdmpRepo repo : repos) {
