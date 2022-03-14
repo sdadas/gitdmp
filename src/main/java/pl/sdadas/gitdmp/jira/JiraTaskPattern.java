@@ -20,7 +20,7 @@ public class JiraTaskPattern implements Serializable {
         String url = ref.jira().getUrl().strip();
         if(!url.endsWith("/")) url += "/";
         url += "browse/";
-        String re = String.format("(\\s|^)(%s)?([A-Z]+\\-\\d+)(\\s|$)", Pattern.quote(url));
+        String re = String.format("(?=(\\s|^|,)(%s)?([A-Z]+\\-\\d+)(\\s|$))", Pattern.quote(url));
         return Pattern.compile(re, Pattern.MULTILINE | Pattern.UNICODE_CASE);
     }
 
